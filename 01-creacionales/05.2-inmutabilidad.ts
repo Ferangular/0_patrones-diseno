@@ -1,11 +1,11 @@
 /**
- * ! Inmutabilidad con copia
- * Aunque la inmutabilidad es una buena práctica, no siempre es posible.
- * En estos casos, se puede hacer una copia del objeto y modificar la copia.
- *
- *  * Es útil para mantener un historial de estados en aplicaciones interactivas.
- *
- */
+ * Sección: Inmutabilidad con Copia
+ * Descripción:
+ * La inmutabilidad es una práctica clave en el desarrollo de software que asegura que los objetos
+ * no sean modificados directamente después de ser creados. Esto facilita el mantenimiento de un
+ * historial de estados y la prevención de efectos secundarios no deseados. En situaciones donde
+ * es necesario realizar cambios, se utiliza el patrón de "Copia con Modificaciones" (Copy-With),
+ * que crea una nueva instancia del objeto con las modificaciones necesarias.
 
 /**
  1.	Completen el método copyWith en la clase Player para que permita 
@@ -17,21 +17,49 @@
 
 import { COLORS } from '../helpers/colors.ts';
 
-// 1. Clase Player inmutable
+interface PlayerProps {
+  name: string;
+  score: number;
+  level: number;
+}
+
+/**
+ * Clase Player inmutable
+ * Permite gestionar un jugador en un estado constante y realizar cambios
+ * mediante el patrón de copia con modificaciones.
+ */
 class Player {
   readonly name: string;
   readonly score: number;
   readonly level: number;
 
-  constructor(name: string, score: number, level: number) {
-    throw new Error('Method not implemented.');
+  constructor({ level, name, score }: PlayerProps) {
+    this.name = name;
+    this.score = score;
+    this.level = level;
   }
 
-  // Método copyWith para crear una copia modificada del jugador
+  /**
+   * ! Método copyWith
+   * Crea una copia del jugador con cambios opcionales en las propiedades.
+   * Si no se especifica un valor, mantiene el valor actual.
+   *
+   * @param name - Nombre del jugador (opcional).
+   * @param score - Puntaje del jugador (opcional).
+   * @param level - Nivel del jugador (opcional).
+   * @returns Nueva instancia de Player.
+   */
   copyWith({ name, score, level }: Partial<Player>): Player {
-    throw new Error('Method not implemented.');
+    return new Player({
+      level: level ?? this.level,
+      name: name ?? this.name,
+      score: score ?? this.score,
+    });
   }
 
+  /**
+   * Muestra el estado actual del jugador en la consola con estilos.
+   */
   displayState(): void {
     console.log(`\n%cJugador: ${this.name}`, COLORS.green);
     console.log(`%cPuntaje: ${this.score}`, COLORS.yellow);
@@ -39,10 +67,14 @@ class Player {
   }
 }
 
-// 2. Código Cliente para probar
+// Código cliente para probar la funcionalidad
 function main() {
   // Crear jugador inicial
-  let player = new Player('Carlos', 0, 1);
+  let player = new Player({
+    level: 1,
+    name: 'Carlos',
+    score: 0,
+  });
   console.log('Estado inicial:');
   player.displayState();
 

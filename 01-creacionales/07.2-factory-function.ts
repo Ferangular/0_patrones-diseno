@@ -8,14 +8,20 @@
  *
  */
 
-//! Salida esperada
-//! Colocar colores de log según el nivel
-//* [INFO:2025-10-21:07] Aplicación iniciada correctamente.
-//* [WARNING:2025-10-21:07] El uso de memoria está alto.
-//* [ERROR:2025-10-21:07] Error de conexión a la base de datos.
+/**
+ * ! Factory Function
+ * Un patrón de diseño que permite la creación dinámica de objetos o funciones.
+ *
+ * * Es útil cuando necesitamos definir objetos o funciones de manera dinámica en tiempo de ejecución.
+ */
 
 import { COLORS } from '../helpers/colors.ts';
 
+/**
+ * Formatea una fecha a formato 'YYYY-MM-DD HH:mm:ss'
+ * @param {Date} date - La fecha a formatear.
+ * @returns {string} - La fecha formateada.
+ */
 function formatDate(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses empiezan desde 0
@@ -27,20 +33,45 @@ function formatDate(date: Date): string {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+/**
+ * Crea un logger dinámico basado en el nivel de log (info, warn, error).
+ * @param {LogLevel} level - Nivel de log ('info', 'warn', 'error').
+ * @returns {function} - Función para manejar logs con el nivel y formato adecuado.
+ */
+
+
 // Función fábrica que crea un manejador de logs
 type LogLevel = 'info' | 'warn' | 'error';
 
 function createLogger(level: LogLevel) {
-  // Retorna una función que recibe el "message" como argumento
-  // Completar: implementar el logger con formato y color para cada nivel
-  throw new Error('Not implemented');
+  // Define colores y prefijos para cada nivel de log
+  const logColor = {
+    info: COLORS.white,
+    warn: COLORS.yellow,
+    error: COLORS.red,
+  };
+
+  const prefix = {
+    info: 'INFO',
+    warn: 'WARNING',
+    error: 'ERROR',
+  };
+
+  // Retorna una función que formatea y muestra el log
+  return (message: string) => {
+    const timestamp = formatDate(new Date()); // Obtiene la fecha formateada
+    console.log(
+        `%c[${prefix[level]}: ${timestamp}] ${message}`,  // Formato del mensaje
+        logColor[level]  // Color específico según el nivel de log
+    );
+  };
 }
 
-// Ejemplo de uso
+// Ejemplo de uso de la función Factory para crear logs de diferentes niveles
 function main() {
-  const infoLogger = createLogger('info');
-  const warnLogger = createLogger('warn');
-  const errorLogger = createLogger('error');
+  const infoLogger = createLogger('info');  // Logger para 'info'
+  const warnLogger = createLogger('warn');  // Logger para 'warn'
+  const errorLogger = createLogger('error'); // Logger para 'error'
 
   infoLogger('Aplicación iniciada correctamente.');
   warnLogger('El uso de memoria está alto.');
