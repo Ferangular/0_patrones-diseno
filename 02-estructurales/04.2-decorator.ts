@@ -1,26 +1,44 @@
 /**
- * ! Patrón decorador
- * Es un patrón de diseño estructural que permite añadir
- * funcionalidades a objetos, colocando estos objetos dentro de
- * objetos encapsuladores especiales que contienen estas funcionalidades.
+ * ! Patrón Decorador
+ * Este código implementa el patrón de diseño estructural conocido como "Decorador".
  *
- * No confundirlo con los decoradores de TypeScript que son anotaciones.
+ * * ¿Qué es?
+ * El Decorador permite añadir comportamientos o funcionalidades adicionales a un objeto
+ * de forma dinámica, sin modificar su estructura base. Esto se logra envolviendo el objeto
+ * base dentro de objetos decoradores que amplían su funcionalidad.
  *
- * * Es útil cuando necesitas añadir funcionalidades a objetos
- *  * de manera dinámica y flexible.
+ * * Diferencias clave:
+ * - No debe confundirse con los decoradores de TypeScript (por ejemplo, @Component),
+ *   que son metadatos para clases, propiedades o métodos.
  *
- * https://refactoring.guru/es/design-patterns/decorator
+ * * Casos de uso:
+ * Es especialmente útil cuando:
+ * - Necesitas añadir funcionalidades específicas a un objeto en tiempo de ejecución.
+ * - Quieres evitar la proliferación de subclases para cada combinación de funcionalidades.
+ *
+ * Más información: https://refactoring.guru/es/design-patterns/decorator
  */
 
 // 1. Interfaz Character
+/**
+ * Interfaz que define las operaciones principales para un personaje.
+ * * Métodos:
+ * - `getDescription`: Proporciona una descripción del personaje.
+ * - `getStats`: Devuelve las estadísticas (ataque y defensa) del personaje.
+ */
 interface Character {
   getDescription(): string;
   getStats(): { attack: number; defense: number };
 }
 
 // 2. Clase BasicCharacter
-// Representa un personaje básico sin accesorios
-// TODO: Implementar la interfaz Character
+/**
+ * Implementación base de un personaje. Representa un personaje sin accesorios.
+ * * Implementa la interfaz `Character`.
+ * * Métodos:
+ * - `getDescription`: Devuelve "Personaje básico".
+ * - `getStats`: Proporciona estadísticas iniciales: ataque = 10, defensa = 10.
+ */
 class BasicCharacter implements Character {
   getDescription(): string {
     return 'Personaje básico';
@@ -32,7 +50,17 @@ class BasicCharacter implements Character {
 }
 
 // 3. Clase Decoradora CharacterDecorator
-// Actúa como base para los decoradores específicos
+/**
+ * Clase abstracta que actúa como base para todos los decoradores.
+ * * Principio de diseño:
+ * - Sigue el principio de sustitución de Liskov, ya que extiende la interfaz `Character`.
+ *
+ * * Propiedades:
+ * - `character`: Objeto `Character` decorado (composición).
+ *
+ * * Métodos:
+ * - Sobrescribe `getDescription` y `getStats` para delegar al objeto decorado.
+ */
 abstract class CharacterDecorator implements Character {
   protected character: Character;
 
@@ -50,7 +78,15 @@ abstract class CharacterDecorator implements Character {
 }
 
 // 4. Decorador Concreto HelmetDecorator
-// Añade un casco que aumenta la defensa en +5
+/**
+ * Decorador que añade un casco al personaje.
+ * * Efecto:
+ * - Aumenta la defensa en +5.
+ *
+ * * Implementación:
+ * - Modifica el método `getStats` para incluir el incremento de defensa.
+ * - Modifica el método `getDescription` para agregar "con Casco".
+ */
 class HelmetDecorator extends CharacterDecorator {
   override getDescription(): string {
     return this.character.getDescription() + '\n * con Casco';
@@ -63,7 +99,11 @@ class HelmetDecorator extends CharacterDecorator {
 }
 
 // 5. Decorador Concreto ShieldDecorator
-// Añade un escudo que aumenta la defensa en +10
+/**
+ * Decorador que añade un escudo al personaje.
+ * * Efecto:
+ * - Aumenta la defensa en +10.
+ */
 class ShieldDecorator extends CharacterDecorator {
   override getDescription(): string {
     return this.character.getDescription() + '\n * con Escudo';
@@ -76,7 +116,11 @@ class ShieldDecorator extends CharacterDecorator {
 }
 
 // 6. Decorador Concreto SwordDecorator
-// Añade una espada que aumenta el ataque en +7
+/**
+ * Decorador que añade una espada al personaje.
+ * * Efecto:
+ * - Aumenta el ataque en +7.
+ */
 class SwordDecorator extends CharacterDecorator {
   override getDescription(): string {
     return this.character.getDescription() + '\n * con Espada';
@@ -88,8 +132,12 @@ class SwordDecorator extends CharacterDecorator {
   }
 }
 
-// TODO: Crear un nuevo decorador que añada un anillo que aumenta el ataque en +3
-// class RingDecorator ...
+// 7. Decorador Concreto RingDecorator
+/**
+ * Decorador que añade un anillo al personaje.
+ * * Efecto:
+ * - Aumenta el ataque en +3.
+ */
 class RingDecorator extends CharacterDecorator {
   override getDescription(): string {
     return this.character.getDescription() + '\n * con Anillo';
@@ -101,25 +149,28 @@ class RingDecorator extends CharacterDecorator {
   }
 }
 
-// 7. Código Cliente para Probar el Decorador
-
+// 8. Código Cliente para Probar el Decorador
+/**
+ * Función principal que simula la creación de un personaje y le añade decoradores.
+ *
+ * * Proceso:
+ * 1. Crea un personaje básico.
+ * 2. Añade decoradores (casco, escudo, espada, anillo).
+ * 3. Imprime la descripción y las estadísticas en cada paso.
+ */
 function main() {
-  // Crear un personaje básico
   let character: Character = new BasicCharacter();
   console.log('\nPersonaje inicial:', character.getDescription());
   console.log('Estadísticas:', character.getStats());
 
-  // Añadir un casco al personaje
   character = new HelmetDecorator(character);
   console.log('\nCon Casco:', character.getDescription());
   console.log('Estadísticas:', character.getStats());
 
-  // Añadir un escudo al personaje
   character = new ShieldDecorator(character);
   console.log('\nCon Escudo:', character.getDescription());
   console.log('Estadísticas:', character.getStats());
 
-  // Añadir una espada al personaje
   character = new SwordDecorator(character);
   console.log('\nCon Espada:', character.getDescription());
   console.log('Estadísticas:', character.getStats());
@@ -127,8 +178,6 @@ function main() {
   character = new RingDecorator(character);
   console.log('\nCon Anillo:', character.getDescription());
   console.log('Estadísticas:', character.getStats());
-
-  console.log('\n\n');
 }
 
 main();
